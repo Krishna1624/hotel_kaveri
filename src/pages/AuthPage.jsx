@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { LogIn, UserPlus, Key, Mail, User, Phone } from "lucide-react";
-import { apiFetch, parseJwt } from "../api";
+import { apiFetch, parseJwt, resolveUrl } from "../api";
 export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
   const [activeTab, setActiveTab] = useState("login");
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("/auth/login", {
+      const res = await fetch(resolveUrl("/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -63,7 +63,7 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
     }
     setLoading(true);
     try {
-      const res = await fetch("/auth/register", {
+      const res = await fetch(resolveUrl("/auth/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

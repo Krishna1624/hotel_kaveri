@@ -1,4 +1,13 @@
-export const API_BASE = "";
+export const API_BASE = (import.meta.env?.VITE_API_BASE || "").replace(/\/$/, "");
+
+export function resolveUrl(path) {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return API_BASE ? `${API_BASE}${cleanPath}` : cleanPath;
+}
+
 export function parseJwt(token) {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -6,6 +15,7 @@ export function parseJwt(token) {
     return null;
   }
 }
+
 export async function apiFetch(url, options = {}, onAuthError = null) {
   const token = localStorage.getItem("access_token");
   const headers = {
@@ -20,13 +30,13 @@ export async function apiFetch(url, options = {}, onAuthError = null) {
     headers,
   };
   try {
-    let response = await fetch(url, fetchOptions);
+    let response = await fetch(resolveUrl(url), fetchOptions);
     if (response.status === 401 && localStorage.getItem("refresh_token")) {
       const refreshed = await attemptTokenRefresh();
       if (refreshed) {
         const newToken = localStorage.getItem("access_token");
         headers["Authorization"] = `Bearer ${newToken}`;
-        response = await fetch(url, fetchOptions);
+        response = await fetch(resolveUrl(url), fetchOptions);
       } else {
         if (onAuthError) onAuthError();
       }
@@ -37,11 +47,12 @@ export async function apiFetch(url, options = {}, onAuthError = null) {
     throw err;
   }
 }
+
 async function attemptTokenRefresh() {
   const refreshToken = localStorage.getItem("refresh_token");
   if (!refreshToken) return false;
   try {
-    const response = await fetch("/auth/refresh", {
+    const response = await fetch(resolveUrl("/auth/refresh"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: refreshToken }),
