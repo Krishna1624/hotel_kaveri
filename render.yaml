@@ -20,18 +20,33 @@ services:
         value: owner@example.com
       - key: OWNER_PASSWORD
         value: OwnerPass123
-      - key: MANAGER_EMAIL
-        value: manager@example.com
-      - key: MANAGER_PASSWORD
+      # Property 1: Coorg
+      - key: MANAGER_COORG_EMAIL
+        value: manager_coorg@example.com
+      - key: MANAGER_COORG_PASSWORD
         value: ManagerPass123
-      - key: MANAGER_PROPERTY_ID
-        value: 2
-      - key: STAFF_EMAIL
-        value: reception@example.com
-      - key: STAFF_PASSWORD
+      - key: STAFF_COORG_EMAIL
+        value: reception_coorg@example.com
+      - key: STAFF_COORG_PASSWORD
         value: ReceptionPass123
-      - key: STAFF_PROPERTY_ID
-        value: 1
+      # Property 2: Ooty
+      - key: MANAGER_OOTY_EMAIL
+        value: manager_ooty@example.com
+      - key: MANAGER_OOTY_PASSWORD
+        value: ManagerPass123
+      - key: STAFF_OOTY_EMAIL
+        value: reception_ooty@example.com
+      - key: STAFF_OOTY_PASSWORD
+        value: ReceptionPass123
+      # Property 3: Alleppey
+      - key: MANAGER_ALLEPPEY_EMAIL
+        value: manager_alleppey@example.com
+      - key: MANAGER_ALLEPPEY_PASSWORD
+        value: ManagerPass123
+      - key: STAFF_ALLEPPEY_EMAIL
+        value: reception_alleppey@example.com
+      - key: STAFF_ALLEPPEY_PASSWORD
+        value: ReceptionPass123
 
 databases:
   - name: hotel-kaveri-db
