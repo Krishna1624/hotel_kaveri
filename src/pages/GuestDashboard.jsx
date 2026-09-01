@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../index.css";
 import { Calendar, CreditCard, XCircle, Award, Star, ListFilter, ClipboardCheck, ArrowUpRight, DollarSign } from "lucide-react";
 import { apiFetch } from "../api";
 export default function GuestDashboard({ user, triggerToast }) {

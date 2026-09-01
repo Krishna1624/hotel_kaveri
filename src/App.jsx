@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./index.css";
 import {
   Home, LogIn, LogOut, User, BarChart2, ShieldAlert,
   Calendar, Menu, X, CheckSquare, Bell

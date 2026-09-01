@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../index.css";
 import { LogIn, UserPlus, Key, Mail, User, Phone } from "lucide-react";
 import { apiFetch, parseJwt, resolveUrl } from "../api";
 export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {

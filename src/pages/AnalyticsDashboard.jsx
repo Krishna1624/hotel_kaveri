@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../index.css";
 import {
   TrendingUp, Calendar, RefreshCw, BarChart3, LineChart as LineIcon,
   Percent, DollarSign, Briefcase, ChevronRight, Award

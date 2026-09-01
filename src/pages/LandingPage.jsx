@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../index.css";
 import { Search, Calendar, MapPin, Award, CheckCircle, ArrowRight, User } from "lucide-react";
 import { apiFetch } from "../api";
 export default function LandingPage({ user, triggerToast, onNavigate }) {

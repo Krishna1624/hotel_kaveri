@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../index.css";
 import {
   Users, Calendar, CheckSquare, Search, ChevronRight,
   MapPin, Clock, Plus, HelpCircle, DollarSign, Filter
