@@ -40,13 +40,37 @@ The API never invents a property. Invalid IDs return 404.
 
 ### 1. Environment Configuration
 
-Ensure your `.env` file exists and has your database connection string and secret key:
+Ensure your `.env` file exists and has your database connection string, JWT parameters, and property credentials:
 
 ```ini
-DATABASE_URL=postgresql+psycopg2://postgres:password@localhost:5432/kaveri
+DATABASE_URL=postgresql+psycopg2://postgres:0963@localhost:5432/kaveri
 SECRET_KEY=ZrQOlTswz3fmBwjGBqurXUwAg1W27jHc0ylIUgpGNm0
 ACCESS_TOKEN_MINUTES=15
 REFRESH_TOKEN_DAYS=7
+LOGIN_LIMIT=5
+LOGIN_WINDOW_SECONDS=60
+
+# --- Owner ---
+OWNER_EMAIL=owner@example.com
+OWNER_PASSWORD=OwnerPass123
+
+# --- Property 1: Coorg (ID: 1) ---
+MANAGER_COORG_EMAIL=manager_coorg@example.com
+MANAGER_COORG_PASSWORD=ManagerPass123
+STAFF_COORG_EMAIL=reception_coorg@example.com
+STAFF_COORG_PASSWORD=ReceptionPass123
+
+# --- Property 2: Ooty (ID: 2) ---
+MANAGER_OOTY_EMAIL=manager_ooty@example.com
+MANAGER_OOTY_PASSWORD=ManagerPass123
+STAFF_OOTY_EMAIL=reception_ooty@example.com
+STAFF_OOTY_PASSWORD=ReceptionPass123
+
+# --- Property 3: Alleppey (ID: 3) ---
+MANAGER_ALLEPPEY_EMAIL=manager_alleppey@example.com
+MANAGER_ALLEPPEY_PASSWORD=ManagerPass123
+STAFF_ALLEPPEY_EMAIL=reception_alleppey@example.com
+STAFF_ALLEPPEY_PASSWORD=ReceptionPass123
 ```
 
 ---
@@ -62,7 +86,7 @@ venv\Scripts\activate
 # 2. Install backend dependencies
 pip install -r requirements.txt
 
-# 3. Seed default staff and management accounts
+# 3. Seed or update default staff and management accounts
 python seed_auth.py
 
 # 4. Start the FastAPI backend server
@@ -105,7 +129,30 @@ npm run dev
 
 ---
 
-### 4. Application URLs & Endpoints
+### 4. Render Cloud Deployment
+
+#### A. Database (Render PostgreSQL)
+1. Create a PostgreSQL instance on Render.
+2. Restore local schema and data using `pg_restore`:
+   ```powershell
+   pg_restore --dbname="<RENDER_EXTERNAL_DB_URL>" --no-owner --no-privileges "kaveri_local.dump"
+   ```
+
+#### B. Web Service Configuration
+- **Runtime**: `Python 3`
+- **Build Command**:
+  ```bash
+  npm install && npm run build && pip install -r requirements.txt && python seed_auth.py
+  ```
+- **Start Command**:
+  ```bash
+  uvicorn app:app --host 0.0.0.0 --port $PORT
+  ```
+- **Environment Variables**: Add `DATABASE_URL` (Render Internal DB URL), `SECRET_KEY`, and the manager/staff credentials listed above.
+
+---
+
+### 5. Application URLs & Endpoints
 
 | Service / Interface | URL | Description |
 | :--- | :--- | :--- |
@@ -134,17 +181,18 @@ Any valid email can register:
 
 Do not self-register staff. Seeded accounts include:
 
-*   **Owner**: `owner@example.com` / `OwnerPass123`
-*   **Property 1 (Coorg)**: Manager `manager_coorg@example.com` / Receptionist `reception@example.com` or `reception_coorg@example.com`
-*   **Property 2 (Ooty)**: Manager `manager@example.com` or `manager_ooty@example.com` / Receptionist `reception_ooty@example.com`
-*   **Property 3 (Alleppey)**: Manager `manager_alleppey@example.com` / Receptionist `reception_alleppey@example.com`
-*(All manager passwords are `ManagerPass123` and receptionist passwords are `ReceptionPass123`)*
+*   **Owner**: `owner@example.com` (Configurable via `OWNER_PASSWORD`)
+*   **Property 1 (Coorg)**: Manager `manager_coorg@example.com` (`MANAGER_COORG_PASSWORD`) / Receptionist `reception_coorg@example.com` or `reception@example.com` (`STAFF_COORG_PASSWORD`)
+*   **Property 2 (Ooty)**: Manager `manager_ooty@example.com` or `manager@example.com` (`MANAGER_OOTY_PASSWORD`) / Receptionist `reception_ooty@example.com` (`STAFF_OOTY_PASSWORD`)
+*   **Property 3 (Alleppey)**: Manager `manager_alleppey@example.com` (`MANAGER_ALLEPPEY_PASSWORD`) / Receptionist `reception_alleppey@example.com` (`STAFF_ALLEPPEY_PASSWORD`)
 
-Then:
+Whenever credentials in `.env` are changed, run:
 
 ```powershell
 python seed_auth.py
 ```
+
+`seed_auth.py` automatically updates and re-hashes existing passwords.
 
 The property assignment is carried in the authentication record, not in PostgreSQL.
 
