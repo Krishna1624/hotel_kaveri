@@ -193,8 +193,11 @@ export default function StaffDashboard({ user, triggerToast }) {
         </div>
         {user?.role === "owner" && (
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>Scope:</span>
+            <label htmlFor="scope-property-select" style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>Scope:</label>
             <select
+              id="scope-property-select"
+              name="scopeProperty"
+              aria-label="Select Property Scope"
               className="form-control form-select"
               style={{ width: "220px", background: "rgba(255,255,255,0.05)" }}
               value={selectedProperty}
@@ -211,19 +214,23 @@ export default function StaffDashboard({ user, triggerToast }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div className="glass-panel" style={{ padding: "1.25rem" }}>
             <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Users size={18} />
+              <Users size={18} aria-hidden="true" />
               Guest Database Search
             </h3>
             <form onSubmit={handleGuestLookup} style={{ display: "flex", gap: "0.5rem" }}>
+              <label htmlFor="guest-lookup-email" style={{ display: "none" }}>Guest Email</label>
               <input
+                id="guest-lookup-email"
+                name="guestLookupEmail"
                 type="email"
+                aria-label="Search guest by email"
                 className="form-control"
                 placeholder="search-guest@email.com"
                 value={guestLookupEmail}
                 onChange={(e) => setGuestLookupEmail(e.target.value)}
                 required />
-              <button type="submit" disabled={loadingGuest} className="btn btn-primary" style={{ padding: "0.5rem 1rem" }}>
-                <Search size={16} />
+              <button type="submit" disabled={loadingGuest} className="btn btn-primary" style={{ padding: "0.5rem 1rem" }} aria-label="Search Guest">
+                <Search size={16} aria-hidden="true" />
               </button>
             </form>
             {guestLookupResult && (
@@ -245,7 +252,11 @@ export default function StaffDashboard({ user, triggerToast }) {
           <div className="glass-panel" style={{ padding: "1.25rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
               <h3 style={{ fontSize: "1.1rem" }}>Operations List</h3>
+              <label htmlFor="staff-search-status" style={{ display: "none" }}>Filter operations by state</label>
               <select
+                id="staff-search-status"
+                name="searchStatus"
+                aria-label="Filter operations by state"
                 className="form-control form-select"
                 style={{ width: "130px", padding: "4px 8px", fontSize: "0.8rem" }}
                 value={searchStatus}
@@ -364,12 +375,14 @@ export default function StaffDashboard({ user, triggerToast }) {
               {parseFloat(selectedBooking.balance) > 0 && (
                 <div style={{ background: "rgba(217, 119, 6, 0.02)", border: "1px solid rgba(217, 119, 6, 0.15)", padding: "1.25rem", borderRadius: "10px", marginBottom: "2rem" }}>
                   <h4 style={{ fontSize: "1.05rem", color: "var(--primary)", marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "4px" }}>
-                    <Plus size={16} /> Register Desk Payment
+                    <Plus size={16} aria-hidden="true" /> Register Desk Payment
                   </h4>
                   <form onSubmit={submitDeskPayment} className="grid-3" style={{ gridTemplateColumns: "1.2fr 1.2fr 1fr", alignItems: "end" }}>
                     <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label className="form-label" style={{ fontSize: "0.75rem" }}>Amount (₹)</label>
+                      <label htmlFor="desk-pay-amount" className="form-label" style={{ fontSize: "0.75rem" }}>Amount (₹)</label>
                       <input
+                        id="desk-pay-amount"
+                        name="deskPayAmount"
                         type="number"
                         step="0.01"
                         className="form-control"
@@ -381,8 +394,10 @@ export default function StaffDashboard({ user, triggerToast }) {
                         required />
                     </div>
                     <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label className="form-label" style={{ fontSize: "0.75rem" }}>Method</label>
+                      <label htmlFor="desk-pay-method" className="form-label" style={{ fontSize: "0.75rem" }}>Method</label>
                       <select
+                        id="desk-pay-method"
+                        name="deskPayMethod"
                         className="form-control form-select"
                         value={deskPayMethod}
                         onChange={(e) => setDeskPayMethod(e.target.value)}>
@@ -395,8 +410,10 @@ export default function StaffDashboard({ user, triggerToast }) {
                       {submittingDeskPay ? "Saving..." : "Add"}
                     </button>
                     <div className="form-group" style={{ gridColumn: "1 / -1", marginTop: "0.75rem", marginBottom: 0 }}>
-                      <label className="form-label" style={{ fontSize: "0.75rem" }}>Receipt Reference / Note</label>
+                      <label htmlFor="desk-pay-ref" className="form-label" style={{ fontSize: "0.75rem" }}>Receipt Reference / Note</label>
                       <input
+                        id="desk-pay-ref"
+                        name="deskPayRef"
                         type="text"
                         className="form-control"
                         placeholder="Receipt ID or reference number"

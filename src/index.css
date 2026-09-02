@@ -14,10 +14,10 @@
   --danger: #ef4444;
   --warning: #f59e0b;
   --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
+  --text-muted: #d1d5db;
   --text-dark: #111827;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(217, 119, 6, 0.5);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-focus: rgba(217, 119, 6, 0.7);
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
@@ -119,6 +119,11 @@ textarea {
   box-shadow: var(--shadow-lg), var(--shadow-glow);
 }
 
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -134,12 +139,14 @@ textarea {
 
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: #090d16;
+  font-weight: 700;
   box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
 }
 
 .btn-primary:hover {
-  background: var(--primary-hover);
+  background: #f59e0b;
+  color: #090d16;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(217, 119, 6, 0.6);
 }
@@ -195,9 +202,9 @@ textarea {
 
 .form-label {
   display: block;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 0.5rem;
-  color: var(--text-muted);
+  color: #e5e7eb;
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;

@@ -207,12 +207,16 @@ export default function App() {
         }}>
           <div
             onClick={() => navigateTo("home")}
+            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && navigateTo("home")}
+            role="button"
+            tabIndex={0}
+            aria-label="Kaveri Stays Home"
             style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
             <span className="font-serif" style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#fff", letterSpacing: "1px" }}>
               Kaveri <span style={{ color: "var(--primary)" }}>Stays</span>
             </span>
           </div>
-          <nav className="desktop-nav" style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <nav className="desktop-nav" aria-label="Main Navigation" style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
             <button
               onClick={() => navigateTo("home")}
               className="btn btn-secondary"
@@ -220,7 +224,7 @@ export default function App() {
                 background: currentPage === "home" ? "rgba(255,255,255,0.06)" : "transparent",
                 borderColor: currentPage === "home" ? "var(--primary)" : "transparent"
               }}>
-              <Home size={16} /> Home
+              <Home size={16} aria-hidden="true" /> Home
             </button>
             {user ? (
               <>
@@ -232,7 +236,7 @@ export default function App() {
                       background: currentPage === "guest" ? "rgba(255,255,255,0.06)" : "transparent",
                       borderColor: currentPage === "guest" ? "var(--primary)" : "transparent"
                     }}>
-                    <Calendar size={16} /> My Bookings
+                    <Calendar size={16} aria-hidden="true" /> My Bookings
                   </button>
                 )}
                 {(user.role === "staff" || user.role === "manager" || user.role === "owner") && (
@@ -243,7 +247,7 @@ export default function App() {
                       background: currentPage === "staff" ? "rgba(255,255,255,0.06)" : "transparent",
                       borderColor: currentPage === "staff" ? "var(--primary)" : "transparent"
                     }}>
-                    <CheckSquare size={16} /> Desk Ops
+                    <CheckSquare size={16} aria-hidden="true" /> Desk Ops
                   </button>
                 )}
                 {(user.role === "manager" || user.role === "owner") && (
@@ -254,7 +258,7 @@ export default function App() {
                       background: currentPage === "analytics" ? "rgba(255,255,255,0.06)" : "transparent",
                       borderColor: currentPage === "analytics" ? "var(--primary)" : "transparent"
                     }}>
-                    <BarChart2 size={16} /> Analytics
+                    <BarChart2 size={16} aria-hidden="true" /> Analytics
                   </button>
                 )}
                 <div style={{
@@ -267,7 +271,7 @@ export default function App() {
                   border: "1px solid var(--border)",
                   borderRadius: "20px"
                 }}>
-                  <User size={14} style={{ color: "var(--primary)" }} />
+                  <User size={14} aria-hidden="true" style={{ color: "var(--primary)" }} />
                   <span style={{ fontSize: "0.85rem", color: "var(--text-main)", fontWeight: "500" }}>
                     {user.full_name}
                   </span>
@@ -283,26 +287,28 @@ export default function App() {
                     {user.role}
                   </span>
                 </div>
-                <button onClick={() => handleLogout(true)} className="btn btn-secondary" style={{ marginLeft: "0.5rem" }} title="Logout">
-                  <LogOut size={16} style={{ color: "var(--danger)" }} />
+                <button onClick={() => handleLogout(true)} className="btn btn-secondary" style={{ marginLeft: "0.5rem" }} title="Logout" aria-label="Sign Out">
+                  <LogOut size={16} aria-hidden="true" style={{ color: "var(--danger)" }} />
                 </button>
               </>
             ) : (
               <button onClick={() => navigateTo("auth")} className="btn btn-primary" style={{ marginLeft: "1rem" }}>
-                <LogIn size={16} /> Access Portal
+                <LogIn size={16} aria-hidden="true" /> Access Portal
               </button>
             )}
           </nav>
           <button
             className="mobile-menu-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
             style={{ display: "none", cursor: "pointer" }}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
           </button>
         </div>
       </header>
       {mobileMenuOpen && (
-        <div className="glass-panel" style={{
+        <nav aria-label="Mobile Navigation" className="glass-panel" style={{
           position: "fixed",
           top: "4.5rem",
           left: 0,
@@ -349,7 +355,7 @@ export default function App() {
               <LogIn size={16} /> Access Portal
             </button>
           )}
-        </div>
+        </nav>
       )}
       <main className="main-content">
         <Suspense fallback={

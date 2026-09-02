@@ -95,7 +95,7 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
           <h2 className="font-serif" style={{ fontSize: "2rem", color: "var(--primary)" }}>Kaveri Stays</h2>
           <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginTop: "0.25rem" }}>Portal Access Control</p>
         </div>
-        <div style={{
+        <div role="tablist" aria-label="Authentication Options" style={{
           display: "flex",
           background: "rgba(255,255,255,0.03)",
           border: "1px solid var(--border)",
@@ -105,6 +105,9 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
         }}>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === "login"}
+            aria-controls="login-panel"
             className="btn"
             onClick={() => { setActiveTab("login"); triggerToast(null); }}
             style={{
@@ -112,13 +115,17 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
               padding: "0.5rem",
               borderRadius: "6px",
               background: activeTab === "login" ? "var(--primary)" : "transparent",
-              color: activeTab === "login" ? "#fff" : "var(--text-muted)",
+              color: activeTab === "login" ? "#090d16" : "var(--text-muted)",
+              fontWeight: activeTab === "login" ? "700" : "normal",
               boxShadow: activeTab === "login" ? "0 2px 8px rgba(217,119,6,0.3)" : "none"
             }}>
             Sign In
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === "register"}
+            aria-controls="register-panel"
             className="btn"
             onClick={() => { setActiveTab("register"); triggerToast(null); }}
             style={{
@@ -126,21 +133,25 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
               padding: "0.5rem",
               borderRadius: "6px",
               background: activeTab === "register" ? "var(--primary)" : "transparent",
-              color: activeTab === "register" ? "#fff" : "var(--text-muted)",
+              color: activeTab === "register" ? "#090d16" : "var(--text-muted)",
+              fontWeight: activeTab === "register" ? "700" : "normal",
               boxShadow: activeTab === "register" ? "0 2px 8px rgba(217,119,6,0.3)" : "none"
             }}>
             Register
           </button>
         </div>
         {activeTab === "login" && (
-          <form onSubmit={handleLogin}>
+          <form id="login-panel" onSubmit={handleLogin}>
             <div className="form-group">
-              <label className="form-label">
-                <Mail size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+              <label htmlFor="login-email" className="form-label">
+                <Mail size={12} aria-hidden="true" style={{ marginRight: "4px", verticalAlign: "middle" }} />
                 Email Address
               </label>
               <input
+                id="login-email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 className="form-control"
                 placeholder="guest@example.com"
                 value={email}
@@ -148,12 +159,15 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
                 required />
             </div>
             <div className="form-group">
-              <label className="form-label">
-                <Key size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+              <label htmlFor="login-password" className="form-label">
+                <Key size={12} aria-hidden="true" style={{ marginRight: "4px", verticalAlign: "middle" }} />
                 Password
               </label>
               <input
+                id="login-password"
+                name="password"
                 type="password"
+                autoComplete="current-password"
                 className="form-control"
                 placeholder="••••••••••"
                 value={password}
@@ -163,7 +177,7 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
             <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "100%", marginTop: "1rem" }}>
               {loading ? "Authenticating..." : (
                 <>
-                  <LogIn size={18} />
+                  <LogIn size={18} aria-hidden="true" />
                   Access Dashboard
                 </>
               )}
@@ -171,14 +185,17 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
           </form>
         )}
         {activeTab === "register" && (
-          <form onSubmit={handleRegister}>
+          <form id="register-panel" onSubmit={handleRegister}>
             <div className="form-group">
-              <label className="form-label">
-                <User size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+              <label htmlFor="register-name" className="form-label">
+                <User size={12} aria-hidden="true" style={{ marginRight: "4px", verticalAlign: "middle" }} />
                 Full Name
               </label>
               <input
+                id="register-name"
+                name="fullName"
                 type="text"
+                autoComplete="name"
                 className="form-control"
                 placeholder="John Doe"
                 value={fullName}
@@ -186,12 +203,15 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
                 required />
             </div>
             <div className="form-group">
-              <label className="form-label">
-                <Mail size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+              <label htmlFor="register-email" className="form-label">
+                <Mail size={12} aria-hidden="true" style={{ marginRight: "4px", verticalAlign: "middle" }} />
                 Email Address
               </label>
               <input
+                id="register-email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 className="form-control"
                 placeholder="john@example.com"
                 value={email}
@@ -199,24 +219,30 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
                 required />
             </div>
             <div className="form-group">
-              <label className="form-label">
-                <Phone size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+              <label htmlFor="register-phone" className="form-label">
+                <Phone size={12} aria-hidden="true" style={{ marginRight: "4px", verticalAlign: "middle" }} />
                 Phone Number (Optional)
               </label>
               <input
+                id="register-phone"
+                name="phone"
                 type="tel"
+                autoComplete="tel"
                 className="form-control"
                 placeholder="e.g. 9876543210"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)} />
             </div>
             <div className="form-group">
-              <label className="form-label">
-                <Key size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+              <label htmlFor="register-password" className="form-label">
+                <Key size={12} aria-hidden="true" style={{ marginRight: "4px", verticalAlign: "middle" }} />
                 Password (Min 10 characters)
               </label>
               <input
+                id="register-password"
+                name="password"
                 type="password"
+                autoComplete="new-password"
                 className="form-control"
                 placeholder="••••••••••••"
                 value={password}
@@ -227,7 +253,7 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
             <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "100%", marginTop: "1rem" }}>
               {loading ? "Creating Account..." : (
                 <>
-                  <UserPlus size={18} />
+                  <UserPlus size={18} aria-hidden="true" />
                   Register Guest
                 </>
               )}

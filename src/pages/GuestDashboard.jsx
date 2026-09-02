@@ -188,10 +188,14 @@ export default function GuestDashboard({ user, triggerToast }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div className="glass-panel" style={{ padding: "1.25rem" }}>
             <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <ListFilter size={18} />
+              <ListFilter size={18} aria-hidden="true" />
               Filter Stays
             </h3>
+            <label htmlFor="filter-status-guest" className="form-label">Status</label>
             <select
+              id="filter-status-guest"
+              name="filterStatus"
+              aria-label="Filter bookings by status"
               className="form-control form-select"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}>
@@ -244,48 +248,47 @@ export default function GuestDashboard({ user, triggerToast }) {
               </div>)}
           </div>
         </div>
-        <div>
-          {activeBooking ? (
-            <div className="glass-panel" style={{ padding: "2rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid var(--border)", paddingBottom: "1.5rem", marginBottom: "1.5rem" }}>
-                <div>
-                  <span className={`badge badge-${activeBooking.status}`} style={{ marginBottom: "0.5rem" }}>
-                    {activeBooking.status}
-                  </span>
-                  <h3 className="font-serif" style={{ fontSize: "1.75rem" }}>Reservation Details</h3>
-                  <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Booking ID: #{activeBooking.id}</p>
+        {activeBooking ? (
+          <div className="glass-panel" style={{ padding: "2rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "1.5rem", borderBottom: "1px solid var(--border)", paddingBottom: "1.25rem", flexWrap: "wrap", gap: "1rem" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <h3 className="font-serif" style={{ fontSize: "1.75rem" }}>Reservation Details #{activeBooking.id}</h3>
+                  <span className={`badge badge-${activeBooking.status}`}>{activeBooking.status}</span>
                 </div>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginTop: "0.25rem" }}>
+                  Booked on {new Date(activeBooking.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "0.75rem" }}>
                 {activeBooking.status === "confirmed" && (
-                  <button
-                    onClick={() => handleCancelBooking(activeBooking.id)}
-                    className="btn btn-danger"
-                    style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
-                    <XCircle size={14} />
-                    Cancel Booking
-                  </button>)}
+                  <button onClick={() => handleCancelBooking(activeBooking.id)} className="btn btn-danger" style={{ fontSize: "0.85rem", padding: "0.5rem 1rem" }}>
+                    <XCircle size={16} aria-hidden="true" /> Cancel Booking
+                  </button>
+                )}
               </div>
-              <div className="grid-3" style={{ marginBottom: "2rem", background: "rgba(255,255,255,0.01)", padding: "1.25rem", borderRadius: "8px", border: "1px solid var(--border)" }}>
-                <div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Room Details</div>
-                  <div style={{ fontWeight: "600", marginTop: "0.25rem" }}>Room {activeBooking.room_number}</div>
-                  <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Guest Count: {activeBooking.guests}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Stay Duration</div>
-                  <div style={{ fontWeight: "600", marginTop: "0.25rem" }}>{activeBooking.check_in} to {activeBooking.check_out}</div>
-                  <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>{activeBooking.nights} Night{activeBooking.nights > 1 ? "s" : ""}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Guest Registered</div>
-                  <div style={{ fontWeight: "600", marginTop: "0.25rem" }}>{activeBooking.guest_name}</div>
+            </div>
+            <div className="grid-2" style={{ marginBottom: "2rem", gap: "1.5rem" }}>
+              <div className="glass-card">
+                <h4 style={{ fontSize: "1rem", color: "var(--primary)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <Calendar size={16} aria-hidden="true" /> Stay Itinerary
+                </h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", fontSize: "0.95rem" }}>
+                  <p><strong>Room Number:</strong> {activeBooking.room_number}</p>
+                  <p><strong>Check-In:</strong> {activeBooking.check_in}</p>
+                  <p><strong>Check-Out:</strong> {activeBooking.check_out}</p>
+                  <p><strong>Duration:</strong> {activeBooking.nights} Night{activeBooking.nights > 1 ? "s" : ""}</p>
+                  <p><strong>Guests:</strong> {activeBooking.guests_count}</p>
                 </div>
               </div>
-              <div style={{ marginBottom: "2rem" }}>
-                <h4 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Financial Statement</h4>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", background: "rgba(255,255,255,0.02)", padding: "1.25rem", borderRadius: "8px" }}>
+              <div className="glass-card">
+                <h4 style={{ fontSize: "1rem", color: "var(--primary)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <CreditCard size={16} aria-hidden="true" /> Financial Summary
+                </h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", fontSize: "0.95rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: "var(--text-muted)" }}>Total Nightly Tariffs:</span>
-                    <span style={{ fontWeight: "600" }}>₹{parseFloat(activeBooking.total_amount).toLocaleString("en-IN")}</span>
+                    <span style={{ color: "var(--text-muted)" }}>Room Total Charge:</span>
+                    <span style={{ fontWeight: "600" }}>₹{parseFloat(activeBooking.total_rate).toLocaleString("en-IN")}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "var(--text-muted)" }}>Total Payments Deposited:</span>
@@ -299,87 +302,104 @@ export default function GuestDashboard({ user, triggerToast }) {
                   </div>
                 </div>
               </div>
-              {parseFloat(activeBooking.balance) > 0 && activeBooking.status !== "cancelled" && activeBooking.status !== "no_show" && (
-                <div style={{ background: "rgba(217, 119, 6, 0.02)", border: "1px solid rgba(217, 119, 6, 0.2)", padding: "1.5rem", borderRadius: "12px", marginBottom: "2rem" }}>
-                  <h4 style={{ fontSize: "1.1rem", color: "var(--primary)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <CreditCard size={18} />
-                    Submit Installment Payment
-                  </h4>
-                  <form onSubmit={handleAddPayment} className="grid-3" style={{ gridTemplateColumns: "1.5fr 1.5fr 1fr", alignItems: "end" }}>
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label className="form-label">Payment Amount (₹)</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        className="form-control"
-                        placeholder="Amount"
-                        value={payAmount}
-                        onChange={(e) => setPayAmount(e.target.value)}
-                        max={activeBooking.balance}
-                        min="1"
-                        required />
-                    </div>
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label className="form-label">Method</label>
-                      <select
-                        className="form-control form-select"
-                        value={payMethod}
-                        onChange={(e) => setPayMethod(e.target.value)}>
-                        <option value="card">Credit/Debit Card</option>
-                        <option value="upi">UPI Apps</option>
-                        <option value="bank_transfer">Net Banking</option>
-                        <option value="cash">Cash Payment</option>
-                      </select>
-                    </div>
-                    <button type="submit" disabled={submittingPayment} className="btn btn-primary" style={{ width: "100%" }}>
-                      {submittingPayment ? "Processing..." : "Pay Now"}
-                    </button>
-                    <div className="form-group" style={{ gridColumn: "1 / -1", marginTop: "1rem", marginBottom: 0 }}>
-                      <label className="form-label">Reference ID / Comments (Optional)</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="e.g. Bank reference or card transaction receipt id"
-                        value={payRef}
-                        onChange={(e) => setPayRef(e.target.value)}
-                      />
-                    </div>
-                  </form>
-                </div>
-              )}
-              {activeBooking.status === "checked_out" && !reviewedBookings[activeBooking.id] && (
-                <div style={{ background: "rgba(16, 185, 129, 0.02)", border: "1px solid rgba(16, 185, 129, 0.2)", padding: "1.5rem", borderRadius: "12px", marginBottom: "2rem" }}>
-                  <h4 style={{ fontSize: "1.1rem", color: "var(--success)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Star size={18} />
-                    Review Your Stay
-                  </h4>
-                  <form onSubmit={handleAddReview}>
-                    <div className="form-group">
-                      <label className="form-label">Rating</label>
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
-                        {[1, 2, 3, 4, 5].map((stars) => (
+            </div>
+            {parseFloat(activeBooking.balance) > 0 && activeBooking.status !== "cancelled" && activeBooking.status !== "no_show" && (
+              <div style={{ background: "rgba(217, 119, 6, 0.02)", border: "1px solid rgba(217, 119, 6, 0.2)", padding: "1.5rem", borderRadius: "12px", marginBottom: "2rem" }}>
+                <h4 style={{ fontSize: "1.1rem", color: "var(--primary)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <CreditCard size={18} aria-hidden="true" />
+                  Submit Installment Payment
+                </h4>
+                <form onSubmit={handleAddPayment} className="grid-3" style={{ gridTemplateColumns: "1.5fr 1.5fr 1fr", alignItems: "end" }}>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label htmlFor="guest-pay-amount" className="form-label">Payment Amount (₹)</label>
+                    <input
+                      id="guest-pay-amount"
+                      name="payAmount"
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      placeholder="Amount"
+                      value={payAmount}
+                      onChange={(e) => setPayAmount(e.target.value)}
+                      max={activeBooking.balance}
+                      min="1"
+                      required />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label htmlFor="guest-pay-method" className="form-label">Method</label>
+                    <select
+                      id="guest-pay-method"
+                      name="payMethod"
+                      className="form-control form-select"
+                      value={payMethod}
+                      onChange={(e) => setPayMethod(e.target.value)}>
+                      <option value="card">Credit/Debit Card</option>
+                      <option value="upi">UPI Apps</option>
+                      <option value="bank_transfer">Net Banking</option>
+                      <option value="cash">Cash Payment</option>
+                    </select>
+                  </div>
+                  <button type="submit" disabled={submittingPayment} className="btn btn-primary" style={{ width: "100%" }}>
+                    {submittingPayment ? "Processing..." : "Pay Now"}
+                  </button>
+                  <div className="form-group" style={{ gridColumn: "1 / -1", marginTop: "1rem", marginBottom: 0 }}>
+                    <label htmlFor="guest-pay-ref" className="form-label">Reference ID / Comments (Optional)</label>
+                    <input
+                      id="guest-pay-ref"
+                      name="payRef"
+                      type="text"
+                      className="form-control"
+                      placeholder="e.g. Bank reference or card transaction receipt id"
+                      value={payRef}
+                      onChange={(e) => setPayRef(e.target.value)}
+                    />
+                  </div>
+                </form>
+              </div>
+            )}
+            {activeBooking.status === "checked_out" && !reviewedBookings[activeBooking.id] && (
+              <div style={{ background: "rgba(16, 185, 129, 0.02)", border: "1px solid rgba(16, 185, 129, 0.2)", padding: "1.5rem", borderRadius: "12px", marginBottom: "2rem" }}>
+                <h4 style={{ fontSize: "1.1rem", color: "var(--success)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <Star size={18} aria-hidden="true" />
+                  Review Your Stay
+                </h4>
+                <form onSubmit={handleAddReview}>
+                  <div className="form-group">
+                    <label className="form-label">Rating</label>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      {[1, 2, 3, 4, 5].map((stars) => (
+                        <button
+                          key={stars}
+                          type="button"
+                          aria-label={`Rate ${stars} star${stars > 1 ? "s" : ""}`}
+                          onClick={() => setRating(stars)}
+                          style={{ background: "transparent", border: "none", cursor: "pointer", padding: "2px" }}>
                           <Star
-                            key={stars}
                             size={28}
-                            style={{ cursor: "pointer", fill: stars <= rating ? "var(--primary)" : "none", color: "var(--primary)" }}
-                            onClick={() => setRating(stars)} />))}
-                      </div>
+                            aria-hidden="true"
+                            style={{ fill: stars <= rating ? "var(--primary)" : "none", color: "var(--primary)" }}
+                          />
+                        </button>
+                      ))}
                     </div>
-                    <div className="form-group">
-                      <label className="form-label">Review Comment (Optional)</label>
-                      <textarea
-                        className="form-control"
-                        rows="3"
-                        placeholder="How was your stay? Let us know about the service, clean rooms, or environment..."
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        maxLength={2000} />
-                    </div>
-                    <button type="submit" disabled={submittingReview} className="btn btn-primary" style={{ background: "var(--success)" }}>
-                      {submittingReview ? "Submitting..." : "Submit Review"}
-                    </button>
-                  </form>
-                </div>)}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="guest-review-comment" className="form-label">Review Comment (Optional)</label>
+                    <textarea
+                      id="guest-review-comment"
+                      name="comment"
+                      className="form-control"
+                      rows="3"
+                      placeholder="How was your stay? Let us know about the service, clean rooms, or environment..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      maxLength={2000} />
+                  </div>
+                  <button type="submit" disabled={submittingReview} className="btn btn-primary" style={{ background: "var(--success)" }}>
+                    {submittingReview ? "Submitting..." : "Submit Review"}
+                  </button>
+                </form>
+              </div>)}
               <div>
                 <h4 style={{ fontSize: "1.1rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <ClipboardCheck size={18} />
@@ -428,6 +448,5 @@ export default function GuestDashboard({ user, triggerToast }) {
           )}
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }

@@ -171,11 +171,14 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
           alignItems: "end"
         }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">
-              <MapPin size={14} style={{ marginRight: "4px", color: "var(--primary)", verticalAlign: "middle" }} />
+            <label htmlFor="destination-select" className="form-label">
+              <MapPin size={14} aria-hidden="true" style={{ marginRight: "4px", color: "var(--primary)", verticalAlign: "middle" }} />
               Select Destination
             </label>
             <select
+              id="destination-select"
+              name="destination"
+              aria-label="Select Destination Hotel"
               className="form-control form-select"
               value={selectedProperty}
               onChange={(e) => setSelectedProperty(e.target.value)}>
@@ -187,11 +190,14 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
             </select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">
-              <Calendar size={14} style={{ marginRight: "4px", color: "var(--primary)", verticalAlign: "middle" }} />
+            <label htmlFor="check-in-date" className="form-label">
+              <Calendar size={14} aria-hidden="true" style={{ marginRight: "4px", color: "var(--primary)", verticalAlign: "middle" }} />
               Check In
             </label>
             <input
+              id="check-in-date"
+              name="checkIn"
+              aria-label="Check In Date"
               type="date"
               className="form-control"
               value={checkIn}
@@ -199,11 +205,14 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
               required />
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">
-              <Calendar size={14} style={{ marginRight: "4px", color: "var(--primary)", verticalAlign: "middle" }} />
+            <label htmlFor="check-out-date" className="form-label">
+              <Calendar size={14} aria-hidden="true" style={{ marginRight: "4px", color: "var(--primary)", verticalAlign: "middle" }} />
               Check Out
             </label>
             <input
+              id="check-out-date"
+              name="checkOut"
+              aria-label="Check Out Date"
               type="date"
               className="form-control"
               value={checkOut}
@@ -211,8 +220,11 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
               required />
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Room Type</label>
+            <label htmlFor="room-type-select" className="form-label">Room Type</label>
             <select
+              id="room-type-select"
+              name="roomType"
+              aria-label="Filter by Room Type"
               className="form-control form-select"
               value={roomType}
               onChange={(e) => setRoomType(e.target.value)}>
@@ -224,10 +236,10 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
             </select>
           </div>
           <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "center", marginTop: "0.5rem" }}>
-            <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "220px" }}>
+            <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "220px" }} aria-label="Check Availability">
               {loading ? "Searching..." : (
                 <>
-                  <Search size={18} />
+                  <Search size={18} aria-hidden="true" />
                   Check Availability
                 </>)}
             </button>
@@ -242,12 +254,12 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
           <div className="grid-3">
             <div className="glass-card" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
               <div style={{ height: "200px", background: "linear-gradient(45deg, #1e3a8a, #0d9488)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Award size={48} color="rgba(255,255,255,0.7)" />
+                <Award size={48} color="rgba(255,255,255,0.7)" aria-hidden="true" />
               </div>
               <div style={{ padding: "1.5rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                   <h3 style={{ fontSize: "1.25rem" }}>Kaveri Riverside</h3>
-                  <div style={{ color: "var(--primary)", display: "flex", gap: "2px" }}>★★★★☆</div>
+                  <div role="img" aria-label="4 out of 5 stars" style={{ color: "var(--primary)", display: "flex", gap: "2px" }}>★★★★☆</div>
                 </div>
                 <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "1rem" }}>
                   Nestled in the lush hills of Coorg, overlooking the serene river banks. Ideal for nature lovers and tranquil retreats.
@@ -257,12 +269,12 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
             </div>
             <div className="glass-card" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
               <div style={{ height: "200px", background: "linear-gradient(45deg, #311b92, #880e4f)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Award size={48} color="rgba(255,255,255,0.7)" />
+                <Award size={48} color="rgba(255,255,255,0.7)" aria-hidden="true" />
               </div>
               <div style={{ padding: "1.5rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                   <h3 style={{ fontSize: "1.25rem" }}>Kaveri Hilltop</h3>
-                  <div style={{ color: "var(--primary)", display: "flex", gap: "2px" }}>★★★★★</div>
+                  <div role="img" aria-label="5 out of 5 stars" style={{ color: "var(--primary)", display: "flex", gap: "2px" }}>★★★★★</div>
                 </div>
                 <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "1rem" }}>
                   Perched high in Ooty's clouds, offering breathtaking views of tea gardens and valleys. Wrap yourself in cozy mountain luxury.
@@ -272,12 +284,12 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
             </div>
             <div className="glass-card" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
               <div style={{ height: "200px", background: "linear-gradient(45deg, #01579b, #006064)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Award size={48} color="rgba(255,255,255,0.7)" />
+                <Award size={48} color="rgba(255,255,255,0.7)" aria-hidden="true" />
               </div>
               <div style={{ padding: "1.5rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                   <h3 style={{ fontSize: "1.25rem" }}>Kaveri Backwater</h3>
-                  <div style={{ color: "var(--primary)", display: "flex", gap: "2px" }}>★★★★☆</div>
+                  <div role="img" aria-label="4 out of 5 stars" style={{ color: "var(--primary)", display: "flex", gap: "2px" }}>★★★★☆</div>
                 </div>
                 <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "1rem" }}>
                   Experience backwater bliss in Alleppey. Watch houseboats slide by from your private floating balcony.
@@ -367,7 +379,7 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
           <div className="modal-content glass-panel">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", borderBottom: "1px solid var(--border)", paddingBottom: "1rem" }}>
               <h3 className="font-serif" style={{ fontSize: "1.5rem" }}>Complete Your Booking</h3>
-              <button style={{ cursor: "pointer", fontSize: "1.5rem", color: "var(--text-muted)" }} onClick={() => setBookingRoom(null)}>×</button>
+              <button type="button" aria-label="Close booking modal" style={{ cursor: "pointer", fontSize: "1.5rem", color: "var(--text-muted)" }} onClick={() => setBookingRoom(null)}>×</button>
             </div>
             <div className="glass-card" style={{ marginBottom: "1.5rem", background: "rgba(255,255,255,0.02)" }}>
               <h4 style={{ color: "var(--primary)", marginBottom: "0.5rem" }}>{getPropertyName(selectedProperty)}</h4>
@@ -379,8 +391,10 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
             </div>
             <form onSubmit={submitBooking}>
               <div className="form-group">
-                <label className="form-label">Number of Guests</label>
+                <label htmlFor="modal-guests" className="form-label">Number of Guests</label>
                 <select
+                  id="modal-guests"
+                  name="guestsCount"
                   className="form-control form-select"
                   value={guestsCount}
                   onChange={(e) => setGuestsCount(e.target.value)}>
@@ -403,8 +417,10 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
               {includeDeposit && (
                 <div style={{ borderLeft: "2px solid var(--primary)", paddingLeft: "1rem", marginTop: "1rem" }}>
                   <div className="form-group">
-                    <label className="form-label">Deposit Amount (₹)</label>
+                    <label htmlFor="modal-deposit-amount" className="form-label">Deposit Amount (₹)</label>
                     <input
+                      id="modal-deposit-amount"
+                      name="depositAmount"
                       type="number"
                       step="0.01"
                       className="form-control"
@@ -417,8 +433,10 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
                   </div>
                   <div className="grid-2">
                     <div className="form-group">
-                      <label className="form-label">Payment Method</label>
+                      <label htmlFor="modal-deposit-method" className="form-label">Payment Method</label>
                       <select
+                        id="modal-deposit-method"
+                        name="depositMethod"
                         className="form-control form-select"
                         value={depositMethod}
                         onChange={(e) => setDepositMethod(e.target.value)}>
@@ -429,8 +447,10 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
                       </select>
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Reference ID (Optional)</label>
+                      <label htmlFor="modal-deposit-ref" className="form-label">Reference ID (Optional)</label>
                       <input
+                        id="modal-deposit-ref"
+                        name="depositRef"
                         type="text"
                         className="form-control"
                         placeholder="Transaction Ref No"

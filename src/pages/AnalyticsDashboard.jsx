@@ -118,8 +118,11 @@ export default function AnalyticsDashboard({ user, triggerToast }) {
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
           {user?.role === "owner" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>Scope</span>
+              <label htmlFor="analytics-scope" style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>Scope</label>
               <select
+                id="analytics-scope"
+                name="scope"
+                aria-label="Select Analytics Property Scope"
                 className="form-control form-select"
                 style={{ width: "180px", padding: "6px 12px", fontSize: "0.85rem" }}
                 value={selectedProperty}
@@ -132,8 +135,11 @@ export default function AnalyticsDashboard({ user, triggerToast }) {
             </div>
           )}
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>From</span>
+            <label htmlFor="analytics-from-date" style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>From</label>
             <input
+              id="analytics-from-date"
+              name="fromDate"
+              aria-label="From Date"
               type="date"
               className="form-control"
               style={{ width: "140px", padding: "6px 12px", fontSize: "0.85rem" }}
@@ -141,8 +147,11 @@ export default function AnalyticsDashboard({ user, triggerToast }) {
               onChange={(e) => setFrom(e.target.value)} />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>To</span>
+            <label htmlFor="analytics-to-date" style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "600", textTransform: "uppercase" }}>To</label>
             <input
+              id="analytics-to-date"
+              name="toDate"
+              aria-label="To Date"
               type="date"
               className="form-control"
               style={{ width: "140px", padding: "6px 12px", fontSize: "0.85rem" }}
@@ -153,8 +162,9 @@ export default function AnalyticsDashboard({ user, triggerToast }) {
             onClick={loadReportData}
             className="btn btn-secondary"
             style={{ padding: "8px 12px", marginTop: "18px" }}
-            title="Refresh Data">
-            <RefreshCw size={16} />
+            title="Refresh Data"
+            aria-label="Refresh Data">
+            <RefreshCw size={16} aria-hidden="true" />
           </button>
         </div>
       </div>
