@@ -4,10 +4,10 @@ import {
   Users, Calendar, CheckSquare, Search, ChevronRight,
   MapPin, Clock, Plus, HelpCircle, DollarSign, Filter
 } from "lucide-react";
-import { apiFetch } from "../api";
+import { apiFetch, DEFAULT_PROPERTIES } from "../api";
 export default function StaffDashboard({ user, triggerToast }) {
-  const [properties, setProperties] = useState([]);
-  const [selectedProperty, setSelectedProperty] = useState("");
+  const [properties, setProperties] = useState(DEFAULT_PROPERTIES);
+  const [selectedProperty, setSelectedProperty] = useState(user?.property_id?.toString() || "1");
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchStatus, setSearchStatus] = useState("all");
@@ -28,19 +28,20 @@ export default function StaffDashboard({ user, triggerToast }) {
         const res = await apiFetch("/properties");
         if (res.ok) {
           const data = await res.json();
-          setProperties(data.items || []);
-          if (user?.role === "owner") {
-            if (data.items?.length > 0) {
+          if (data.items?.length > 0) {
+            setProperties(data.items);
+            if (user?.role === "owner") {
               setSelectedProperty(data.items[0].id.toString());
+            } else {
+              setSelectedProperty(user?.property_id?.toString() || data.items[0].id.toString());
             }
-          } else {
-            setSelectedProperty(user?.property_id?.toString() || "");
           }
         }
       } catch (err) {
-        triggerToast("Failed to fetch properties list.", "error");
+        console.warn("Could not fetch properties list, using default list", err);
       }
-    } loadProperties();
+    }
+    loadProperties();
   }, [user]);
   const loadBookings = async () => {
     if (!selectedProperty) return;
@@ -55,10 +56,11 @@ export default function StaffDashboard({ user, triggerToast }) {
         const data = await res.json();
         setBookings(data.items || []);
       } else {
-        triggerToast("Failed to load property bookings.", "error");
+        const errData = await res.json().catch(() => ({}));
+        triggerToast(errData.error?.message || "Failed to load property bookings.", "error");
       }
     } catch (err) {
-      triggerToast("Error connecting to bookings service.", "error");
+      triggerToast("Cannot reach backend server. Please verify FastAPI is running on port 8000.", "error");
     } finally {
       setLoading(false);
     }
@@ -99,11 +101,11 @@ export default function StaffDashboard({ user, triggerToast }) {
         setSelectedBooking(updated);
         loadBookings();
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Action failed.", "error");
       }
     } catch (err) {
-      triggerToast("Error processing booking transition.", "error");
+      triggerToast("Cannot reach backend server. Please verify backend status.", "error");
     }
   };
   const submitDeskPayment = async (e) => {
@@ -143,11 +145,11 @@ export default function StaffDashboard({ user, triggerToast }) {
         }
         loadBookings();
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Payment registration failed.", "error");
       }
     } catch (err) {
-      triggerToast("Error registering payment.", "error");
+      triggerToast("Cannot reach backend server to register payment.", "error");
     } finally {
       setSubmittingDeskPay(false);
     }
@@ -167,10 +169,11 @@ export default function StaffDashboard({ user, triggerToast }) {
           triggerToast("No guest profile found matching that email.", "info");
         }
       } else {
-        triggerToast("Error fetching guest details.", "error");
+        const errData = await res.json().catch(() => ({}));
+        triggerToast(errData.error?.message || "Error fetching guest details.", "error");
       }
     } catch (err) {
-      triggerToast("Error searching guest database.", "error");
+      triggerToast("Cannot reach backend server to search guest database.", "error");
     } finally {
       setLoadingGuest(false);
     }

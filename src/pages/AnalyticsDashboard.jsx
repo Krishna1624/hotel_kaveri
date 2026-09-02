@@ -8,9 +8,9 @@ import {
   ResponsiveContainer, BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from "recharts";
-import { apiFetch } from "../api";
+import { apiFetch, DEFAULT_PROPERTIES } from "../api";
 export default function AnalyticsDashboard({ user, triggerToast }) {
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] = useState(DEFAULT_PROPERTIES);
   const [selectedProperty, setSelectedProperty] = useState("all");
   const [from_, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -33,10 +33,12 @@ export default function AnalyticsDashboard({ user, triggerToast }) {
         const res = await apiFetch("/properties");
         if (res.ok) {
           const data = await res.json();
-          setProperties(data.items || []);
+          if (data.items?.length > 0) {
+            setProperties(data.items);
+          }
         }
       } catch (err) {
-        console.error(err);
+        console.warn("Could not fetch properties list, using default list", err);
       }
     }
     loadProperties();
@@ -65,7 +67,7 @@ export default function AnalyticsDashboard({ user, triggerToast }) {
         setRevenueData(revVal);
       }
     } catch (err) {
-      triggerToast("Error fetching report data.", "error");
+      triggerToast("Cannot reach backend server. Please verify FastAPI is running on port 8000.", "error");
     } finally {
       setLoading(false);
     }

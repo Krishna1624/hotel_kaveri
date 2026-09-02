@@ -26,10 +26,11 @@ export default function GuestDashboard({ user, triggerToast }) {
         const data = await res.json();
         setPayments(data || []);
       } else {
-        triggerToast("Failed to load payment history.", "error");
+        const errData = await res.json().catch(() => ({}));
+        triggerToast(errData.error?.message || "Failed to load payment history.", "error");
       }
     } catch (err) {
-      triggerToast("Error loading payments.", "error");
+      triggerToast("Cannot reach backend server to load payments.", "error");
     } finally {
       setLoadingPayments(false);
     }
@@ -60,10 +61,11 @@ export default function GuestDashboard({ user, triggerToast }) {
           handleBookingSelect(items[0]);
         }
       } else {
-        triggerToast("Failed to load your bookings.", "error");
+        const errData = await res.json().catch(() => ({}));
+        triggerToast(errData.error?.message || "Failed to load your bookings.", "error");
       }
     } catch (err) {
-      triggerToast("Error connecting to bookings service.", "error");
+      triggerToast("Cannot reach backend server. Please verify FastAPI is running on port 8000.", "error");
     } finally {
       setLoading(false);
     }
@@ -84,11 +86,11 @@ export default function GuestDashboard({ user, triggerToast }) {
         setActiveBooking(updated);
         loadBookings();
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Cancellation failed.", "error");
       }
     } catch (err) {
-      triggerToast("Error cancelling booking.", "error");
+      triggerToast("Cannot reach backend server to cancel booking.", "error");
     }
   };
   const handleAddPayment = async (e) => {
@@ -123,16 +125,16 @@ export default function GuestDashboard({ user, triggerToast }) {
         loadPayments(activeBooking.id);
         const bRes = await apiFetch(`/bookings/${activeBooking.id}`);
         if (bRes.ok) {
-          const freshBooking = await bRes.json();
-          setActiveBooking(freshBooking);
+          const fresh = await bRes.json();
+          setActiveBooking(fresh);
         }
         loadBookings();
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Payment processing failed.", "error");
       }
     } catch (err) {
-      triggerToast("Error reporting payment.", "error");
+      triggerToast("Cannot reach backend server to report payment.", "error");
     } finally {
       setSubmittingPayment(false);
     }
@@ -158,11 +160,11 @@ export default function GuestDashboard({ user, triggerToast }) {
           setActiveBooking(freshBooking);
         }
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Failed to submit review.", "error");
       }
     } catch (err) {
-      triggerToast("Error submitting review.", "error");
+      triggerToast("Cannot reach backend server to submit review.", "error");
     } finally {
       setSubmittingReview(false);
     }

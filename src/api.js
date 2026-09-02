@@ -1,4 +1,14 @@
-export const API_BASE = (import.meta.env?.VITE_API_BASE || "").replace(/\/$/, "");
+export const DEFAULT_PROPERTIES = [
+  { id: 1, name: "Kaveri Riverside", city: "Coorg", stars: 4 },
+  { id: 2, name: "Kaveri Hilltop", city: "Ooty", stars: 5 },
+  { id: 3, name: "Kaveri Backwater", city: "Alleppey", stars: 4 },
+];
+
+export const API_BASE = (
+  import.meta.env?.VITE_API_BASE !== undefined
+    ? import.meta.env.VITE_API_BASE
+    : ""
+).replace(/\/$/, "");
 
 export function resolveUrl(path) {
   if (path.startsWith("http://") || path.startsWith("https://")) {
@@ -6,6 +16,15 @@ export function resolveUrl(path) {
   }
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   return API_BASE ? `${API_BASE}${cleanPath}` : cleanPath;
+}
+
+export async function checkBackendHealth() {
+  try {
+    const res = await fetch(resolveUrl("/health"), { method: "GET" });
+    return res.ok;
+  } catch (err) {
+    return false;
+  }
 }
 
 export function parseJwt(token) {

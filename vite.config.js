@@ -7,17 +7,29 @@ export default defineConfig({
   build: {
     outDir: 'static',
     emptyOutDir: true,
-    cssCodeSplit: false,
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-charts': ['recharts'],
+        }
+      }
+    }
   },
   server: {
     port: 3000,
     proxy: {
-      '/auth': 'http://127.0.0.1:8000',
-      '/properties': 'http://127.0.0.1:8000',
-      '/bookings': 'http://127.0.0.1:8000',
-      '/guests': 'http://127.0.0.1:8000',
-      '/reports': 'http://127.0.0.1:8000',
-      '/reviews': 'http://127.0.0.1:8000'
+      '/auth': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      '/properties': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      '/bookings': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      '/guests': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      '/reports': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      '/reviews': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      '/rates': { target: 'http://127.0.0.1:8000', changeOrigin: true },
+      '/health': { target: 'http://127.0.0.1:8000', changeOrigin: true },
     }
   }
 });

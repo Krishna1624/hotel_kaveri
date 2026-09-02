@@ -13,11 +13,14 @@ from fastapi.staticfiles import StaticFiles
 import os
 from errors import integrity_error_handler, validation_error_handler, http_error_handler
 from routers import auth, bookings, guests, properties, reports, reviews
+from fastapi.middleware.gzip import GZipMiddleware
+
 app = FastAPI(
     title="Kaveri Stays API",
     version="1.0.0",
     description="Hotel Booking Management System",
 )
+app.add_middleware(GZipMiddleware, minimum_size=500)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -59,13 +62,27 @@ app.include_router(bookings.router)
 app.include_router(reviews.router)
 app.include_router(reports.router)
 app.include_router(guests.router)
+
+class CachedStaticFiles(StaticFiles):
+    async def get_response(self, path: str, scope):
+        response = await super().get_response(path, scope)
+        if response.status_code == 200:
+            # Vite bundles include content hashes in filenames (immutable for 1 year)
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        return response
+
 os.makedirs("static/assets", exist_ok=True)
-app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
-@app.get("/")
-def root():
-    if os.path.exists("static/index.html"):
-        return FileResponse("static/index.html")
-    return {"message": "Kaveri Stays API Running. Frontend is being set up."}
+app.mount("/assets", CachedStaticFiles(directory="static/assets"), name="assets")
+
 @app.get("/health")
 def health():
     return {"status": "Healthy"}
+
+@app.get("/")
+def root():
+    if os.path.exists("static/index.html"):
+        return FileResponse(
+            "static/index.html",
+            headers={"Cache-Control": "public, max-age=0, must-revalidate"}
+        )
+    return {"message": "Kaveri Stays API Running. Frontend is being set up."}

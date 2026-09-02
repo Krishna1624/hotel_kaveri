@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../index.css";
 import { Search, Calendar, MapPin, Award, CheckCircle, ArrowRight, User } from "lucide-react";
-import { apiFetch } from "../api";
+import { apiFetch, DEFAULT_PROPERTIES } from "../api";
 export default function LandingPage({ user, triggerToast, onNavigate }) {
-  const [properties, setProperties] = useState([]);
-  const [selectedProperty, setSelectedProperty] = useState("");
+  const [properties, setProperties] = useState(DEFAULT_PROPERTIES);
+  const [selectedProperty, setSelectedProperty] = useState("1");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [roomType, setRoomType] = useState("");
@@ -30,13 +30,13 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
         const res = await apiFetch("/properties");
         if (res.ok) {
           const data = await res.json();
-          setProperties(data.items || []);
           if (data.items?.length > 0) {
+            setProperties(data.items);
             setSelectedProperty(data.items[0].id.toString());
           }
         }
       } catch (err) {
-        triggerToast("Failed to load hotels. Please check backend connection.", "error");
+        console.warn("Could not fetch properties, using default list", err);
       }
     }
     loadProperties();
@@ -66,11 +66,11 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
           triggerToast("No rooms available for the selected dates.", "info");
         }
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Search failed.", "error");
       }
     } catch (err) {
-      triggerToast("Error searching room availability.", "error");
+      triggerToast("Cannot reach backend server. Please verify FastAPI is running on port 8000.", "error");
     } finally {
       setLoading(false);
     }
@@ -129,11 +129,11 @@ export default function LandingPage({ user, triggerToast, onNavigate }) {
         handleSearch();
         onNavigate("guest");
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Booking failed.", "error");
       }
     } catch (err) {
-      triggerToast("Error creating booking.", "error");
+      triggerToast("Cannot reach backend server to confirm booking. Please verify server status.", "error");
     } finally {
       setBookingSubmitting(false);
     }

@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import "./index.css";
 import {
   Home, LogIn, LogOut, User, BarChart2, ShieldAlert,
   Calendar, Menu, X, CheckSquare, Bell
 } from "lucide-react";
-import { apiFetch, parseJwt } from "./api";
+import { apiFetch, parseJwt, checkBackendHealth, API_BASE } from "./api";
 import LandingPage from "./pages/LandingPage";
-import AuthPage from "./pages/AuthPage";
-import GuestDashboard from "./pages/GuestDashboard";
-import StaffDashboard from "./pages/StaffDashboard";
-import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const GuestDashboard = lazy(() => import("./pages/GuestDashboard"));
+const StaffDashboard = lazy(() => import("./pages/StaffDashboard"));
+const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [currentPage, setCurrentPage] = useState("home");
   const [checkingSession, setCheckingSession] = useState(true);
+  const [backendConnected, setBackendConnected] = useState(true);
+  const [checkingBackend, setCheckingBackend] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
   const triggerToast = (message, type = "success") => {
@@ -25,10 +29,18 @@ export default function App() {
     }, 4000);
   };
   const removeToast = (id) => { setToasts((prev) => prev.filter((t) => t.id !== id)); };
+
+  const verifyBackend = async () => {
+    const isHealthy = await checkBackendHealth();
+    setBackendConnected(isHealthy);
+    return isHealthy;
+  };
+
   useEffect(() => {
     async function initSession() {
+      const isHealthy = await verifyBackend();
       const token = localStorage.getItem("access_token");
-      if (token) {
+      if (token && isHealthy) {
         try {
           const res = await apiFetch("/auth/me");
           if (res.ok) {
@@ -53,6 +65,17 @@ export default function App() {
     }
     initSession();
   }, []);
+
+  const handleRetryBackend = async () => {
+    setCheckingBackend(true);
+    const ok = await verifyBackend();
+    setCheckingBackend(false);
+    if (ok) {
+      triggerToast("Backend server connected successfully!", "success");
+    } else {
+      triggerToast("Still unable to reach backend server. Please verify FastAPI is running on port 8000.", "error");
+    }
+  };
   const handleLoginSuccess = (userData) => { setUser(userData); };
   const handleLogout = async (notify = true) => {
     const refreshToken = localStorage.getItem("refresh_token");
@@ -125,13 +148,53 @@ export default function App() {
           </div>
         ))}
       </div>
+      {!backendConnected && (
+        <div style={{
+          background: "linear-gradient(90deg, #7f1d1d, #991b1b)",
+          color: "#fecaca",
+          padding: "0.6rem 1.25rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          fontSize: "0.85rem",
+          borderBottom: "1px solid rgba(239, 68, 68, 0.4)",
+          position: "sticky",
+          top: 0,
+          zIndex: 1001,
+          flexWrap: "wrap",
+          gap: "0.5rem"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <ShieldAlert size={18} style={{ color: "#ef4444", flexShrink: 0 }} />
+            <span>
+              <strong>Backend Offline:</strong> Cannot connect to FastAPI API at <code>{API_BASE || "http://127.0.0.1:8000"}</code>. Ensure backend is running (<code>uvicorn app:app --port 8000</code>).
+            </span>
+          </div>
+          <button
+            onClick={handleRetryBackend}
+            disabled={checkingBackend}
+            className="btn"
+            style={{
+              background: "rgba(255,255,255,0.15)",
+              color: "#fff",
+              padding: "0.25rem 0.75rem",
+              fontSize: "0.8rem",
+              borderRadius: "4px",
+              cursor: "pointer",
+              border: "1px solid rgba(255,255,255,0.2)",
+              whiteSpace: "nowrap"
+            }}>
+            {checkingBackend ? "Checking..." : "Retry Connection"}
+          </button>
+        </div>
+      )}
       <header className="glass-panel" style={{
         borderRadius: 0,
         borderLeft: "none",
         borderRight: "none",
         borderTop: "none",
         position: "sticky",
-        top: 0,
+        top: !backendConnected ? "auto" : 0,
         zIndex: 100,
         padding: "1rem 1.5rem"
       }}>
@@ -289,34 +352,56 @@ export default function App() {
         </div>
       )}
       <main className="main-content">
-        {currentPage === "home" && (
-          <LandingPage
-            user={user}
-            triggerToast={triggerToast}
-            onNavigate={navigateTo} />
-        )}
-        {currentPage === "auth" && (
-          <AuthPage
-            triggerToast={triggerToast}
-            onLoginSuccess={handleLoginSuccess}
-            onNavigate={navigateTo} />
-        )}
-        {currentPage === "guest" && (
-          <GuestDashboard
-            user={user}
-            triggerToast={triggerToast} />
-        )}
-        {currentPage === "staff" && (
-          <StaffDashboard
-            user={user}
-            triggerToast={triggerToast} />
-        )}
-        {currentPage === "analytics" && (
-          <AnalyticsDashboard
-            user={user}
-            triggerToast={triggerToast}
-          />
-        )}
+        <Suspense fallback={
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "40vh",
+            color: "var(--text-muted)"
+          }}>
+            <div style={{
+              width: "36px",
+              height: "36px",
+              border: "3px solid var(--border)",
+              borderTopColor: "var(--primary)",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+              marginBottom: "0.75rem"
+            }} />
+            <p style={{ fontSize: "0.9rem" }}>Loading view...</p>
+          </div>
+        }>
+          {currentPage === "home" && (
+            <LandingPage
+              user={user}
+              triggerToast={triggerToast}
+              onNavigate={navigateTo} />
+          )}
+          {currentPage === "auth" && (
+            <AuthPage
+              triggerToast={triggerToast}
+              onLoginSuccess={handleLoginSuccess}
+              onNavigate={navigateTo} />
+          )}
+          {currentPage === "guest" && (
+            <GuestDashboard
+              user={user}
+              triggerToast={triggerToast} />
+          )}
+          {currentPage === "staff" && (
+            <StaffDashboard
+              user={user}
+              triggerToast={triggerToast} />
+          )}
+          {currentPage === "analytics" && (
+            <AnalyticsDashboard
+              user={user}
+              triggerToast={triggerToast}
+            />
+          )}
+        </Suspense>
       </main>
       <footer style={{
         marginTop: "5rem",

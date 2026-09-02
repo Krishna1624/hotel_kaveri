@@ -43,11 +43,11 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
           triggerToast("Failed to retrieve user profile.", "error");
         }
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Invalid credentials.", "error");
       }
     } catch (err) {
-      triggerToast("Error attempting login.", "error");
+      triggerToast("Cannot reach backend server. Please verify FastAPI is running on port 8000.", "error");
     } finally {
       setLoading(false);
     }
@@ -79,11 +79,11 @@ export default function AuthPage({ triggerToast, onLoginSuccess, onNavigate }) {
         setActiveTab("login");
         setPassword("");
       } else {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         triggerToast(errData.error?.message || "Registration failed.", "error");
       }
     } catch (err) {
-      triggerToast("Error during registration.", "error");
+      triggerToast("Cannot reach backend server. Please verify FastAPI is running on port 8000.", "error");
     } finally {
       setLoading(false);
     }
