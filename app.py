@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from sqlalchemy.exc import IntegrityError
 from fastapi.staticfiles import StaticFiles
 import os
@@ -41,6 +41,8 @@ async def request_context(request: Request, call_next):
         if response is not None:
             response.headers["X-Request-ID"] = request.state.request_id
             response.headers["X-Response-Time-ms"] = f"{elapsed_ms:.2f}"
+            response.headers["X-Content-Type-Options"] = "nosniff"
+            response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 app.add_exception_handler(IntegrityError, integrity_error_handler)
 app.add_exception_handler(RequestValidationError, validation_error_handler)
 app.add_exception_handler(HTTPException, http_error_handler)
@@ -77,6 +79,10 @@ app.mount("/assets", CachedStaticFiles(directory="static/assets"), name="assets"
 @app.get("/health")
 def health():
     return {"status": "Healthy"}
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response(status_code=204)
 
 @app.get("/")
 def root():
